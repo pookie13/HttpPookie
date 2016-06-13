@@ -32,12 +32,17 @@ public class JSONParser {
     StringBuilder sbParams;
     String paramsString;
 
-    public JSONObject makeHttpRequest(String url, String method,
-                                      HashMap<String, String> params) {
-
-        sbParams = new StringBuilder();
+    /**
+     * function which makes Http Request for execution.
+     *
+     * @param request will execute this method
+     * @param params  permameters to sends with this request.
+     * @return response after execution.
+     */
+    public JSONObject makeHttpRequest(HttpPookie.Request request, HashMap<String, String> params) {
+        sbParams = new StringBuilder();   //create new string builder to modify url to sends.
         int i = 0;
-        for (String key : params.keySet()) {
+        for (String key : params.keySet()) {    ////loop to add perams in URl.
             try {
                 if (i != 0) {
                     sbParams.append("&");
@@ -51,64 +56,57 @@ public class JSONParser {
             i++;
         }
 
-        if (method.equals(HttpPookie.POST)) {
-            // request method is POST
-            try {
-                urlObj = new URL(url);
 
-                conn = (HttpURLConnection) urlObj.openConnection();
+        //////////////////////////////////check type of Request///////////////////////////////////////////////
+        switch (request.type) {
+            case HttpPookie.POST:
+                /////////////////////////this work around for Post type Methods//////////////////
+                try {
+                    urlObj = new URL(request.url);
+                    conn = (HttpURLConnection) urlObj.openConnection();
+                    conn.setDoOutput(true);
+                    conn.setRequestMethod(HttpPookie.POST);
+                    conn.setRequestProperty(HttpPookie.CHAR_SET, charset);
+                    conn.setReadTimeout(request.getReadTimeOut());
+                    conn.setConnectTimeout(request.getConnectionTimeOut());
+                    conn.connect();
+                    paramsString = sbParams.toString();
+                    wr = new DataOutputStream(conn.getOutputStream());
+                    wr.writeBytes(paramsString);
+                    wr.flush();
+                    wr.close();
 
-                conn.setDoOutput(true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                /////////////////////////////////////////////////////////////////////////////////
+                break;
 
-                conn.setRequestMethod("POST");
+            case HttpPookie.GET:
+                /////////////////////////this work around for GET type Methods//////////////////
+                String localUrl = request.url;
+                if (sbParams.length() != 0) {
+                    localUrl += "?" + sbParams.toString();
+                }
+                try {
+                    urlObj = new URL(localUrl);
+                    conn = (HttpURLConnection) urlObj.openConnection();
+                    conn.setDoOutput(false);
+                    conn.setRequestMethod(HttpPookie.GET);
+                    conn.setRequestProperty(HttpPookie.CHAR_SET, charset);
+                    conn.setConnectTimeout(request.getConnectionTimeOut());
+                    conn.connect();
 
-                conn.setRequestProperty("Accept-Charset", charset);
-
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-
-                conn.connect();
-
-                paramsString = sbParams.toString();
-
-                wr = new DataOutputStream(conn.getOutputStream());
-                wr.writeBytes(paramsString);
-                wr.flush();
-                wr.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if (method.equals(HttpPookie.GET)) {
-            // request method is GET
-
-            if (sbParams.length() != 0) {
-                url += "?" + sbParams.toString();
-            }
-
-            try {
-                urlObj = new URL(url);
-
-                conn = (HttpURLConnection) urlObj.openConnection();
-
-                conn.setDoOutput(false);
-
-                conn.setRequestMethod("GET");
-
-                conn.setRequestProperty("Accept-Charset", charset);
-
-                conn.setConnectTimeout(15000);
-
-                conn.connect();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                /////////////////////////////////////////////////////////////////////////////////
+                break;
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
         try {
-            //Receive the response from the server
+            //////Receive the response from the server////////
             InputStream in = new BufferedInputStream(conn.getInputStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             result = new StringBuilder();
@@ -116,20 +114,17 @@ public class JSONParser {
             while ((line = reader.readLine()) != null) {
                 result.append(line);
             }
-
-            Log.d("JSON Parser", "result: " + result.toString());
+            Log.d(HttpPookie.LOG_, result.toString());
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         conn.disconnect();
-
-        // try parse the string to a JSON object
+        // try Parse the string to a JSON object
         try {
             jObj = new JSONObject(result.toString());
         } catch (JSONException e) {
-            Log.e("JSON Parser", "Error parsing data " + e.toString());
+            Log.e(HttpPookie.LOG_, "Error parsing data " + e.toString());
         }
 
         // return JSON Object
