@@ -1,19 +1,23 @@
 # HttpPookie
-Helping Classes that used to make Http requests.
-just have simple two classes add these classes into your project and start using this.
-we used simple HttpUrlConnection class of android and just maintains the list of request in better way.
-##for using this library you just have to do three steps:
-###1>create object of HttpPookie class:
+Helping Classes that makes Http requests.
+It has two simple classes.You can add these classes into your project and start using it.
+we have used simple HttpUrlConnection class of android. It provides a bridge which maintains the list of requests in better way and provide appropriate response to your classes(Activity,Fragment and services).
+
+##Steps to use this library:
+###1>create an object of HttpPookie class:
  HttpPookie httpPookie = new HttpPookie();
+
 ###2>sets values to your request:
  HttpPookie.Request request = httpPookie
                 .newRequest()
                 .setUrl("http://jsonplaceholder.typicode.com/posts")
                 .setType(HttpPookie.POST)
                 .build();
+                
 ###3>call execute function and handle response like wise
  httpPookie.newCall(request).execute(this);
  
+ Implement these below methods for handling response
  
     @Override
     public void onNoInternetConnection() {
@@ -43,8 +47,8 @@ we used simple HttpUrlConnection class of android and just maintains the list of
 
     }
     
-    thats it with it.
-    now for further changes will be:
+    thats it for now.
+    further changes will be:
     -set tag id to each and every request.
     -if user cancle request then removes from request list.
-    -
+    
