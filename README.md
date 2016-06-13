@@ -5,7 +5,7 @@ we have used simple HttpUrlConnection class of android. It provides a bridge whi
 
 ##Steps to use this library:
 ###1>create an object of HttpPookie class:
- ```sh
+```sh
  HttpPookie httpPookie = new HttpPookie();
 ```
 ###2>sets values to your request:
@@ -19,16 +19,16 @@ we have used simple HttpUrlConnection class of android. It provides a bridge whi
  ```
 You can add more values to your request as per your convenient:
 
- - Add Connection time out
+- Add Connection time out
 
 ```sh 
 setConnectionTimeOut(TIME_TO_SET);
 ```
  - Add Read time out
-   ```sh
+```sh
 setReadTimeOut(TIME_TO_SET);
 ```
- - Add Tag to Request
+- Add Tag to Request
 
 ```sh    
  setTag("STring_tag");
@@ -38,10 +38,10 @@ setReadTimeOut(TIME_TO_SET);
 ###3>call execute function and handle response like wise
 ```sh
  httpPookie.newCall(request).execute(this);
- ```
+```
  Implement these below methods for handling response
 
- ```sh
+```sh
  
     @Override
     public void onNoInternetConnection() {
@@ -75,8 +75,15 @@ setReadTimeOut(TIME_TO_SET);
     
     thats it for now.
     
-    further changes will be:
+### Todos:
     
-    - set tag id to each and every request.
-    - if user cancle request then removes from request list.
+- set tag id to each and every request.
+- if user cancle request then removes from request list.
+- Add XMl Requests.
+- store all response in cache memory to reflects changes.
+
+for more query please feel free to comments and male me [@piyush.gupta][dill]
+
+[dill]: <mailto:piyush.gupta202390@gmail.com>
+    
     
