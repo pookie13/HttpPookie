@@ -5,19 +5,43 @@ we have used simple HttpUrlConnection class of android. It provides a bridge whi
 
 ##Steps to use this library:
 ###1>create an object of HttpPookie class:
+ ```sh
  HttpPookie httpPookie = new HttpPookie();
-
+```
 ###2>sets values to your request:
+
+```sh
  HttpPookie.Request request = httpPookie
-                .newRequest()
-                .setUrl("http://jsonplaceholder.typicode.com/posts")
-                .setType(HttpPookie.POST)
-                .build();
-                
-###3>call execute function and handle response like wise
- httpPookie.newCall(request).execute(this);
+           .newRequest()
+           .setUrl("http://jsonplaceholder.typicode.com/posts")
+           .setType(HttpPookie.POST)
+           .build();
+ ```
+You can add more values to your request as per your convenient:
+
+ - Add Connection time out
+
+```sh 
+setConnectionTimeOut(TIME_TO_SET);
+```
+ - Add Read time out
+   ```sh
+setReadTimeOut(TIME_TO_SET);
+```
+ - Add Tag to Request
+
+```sh    
+ setTag("STring_tag");
+  setTag(1);   //int tag
+```
  
+###3>call execute function and handle response like wise
+```sh
+ httpPookie.newCall(request).execute(this);
+ ```
  Implement these below methods for handling response
+
+ ```sh
  
     @Override
     public void onNoInternetConnection() {
@@ -47,8 +71,12 @@ we have used simple HttpUrlConnection class of android. It provides a bridge whi
 
     }
     
+```
+    
     thats it for now.
+    
     further changes will be:
-    -set tag id to each and every request.
-    -if user cancle request then removes from request list.
+    
+    - set tag id to each and every request.
+    - if user cancle request then removes from request list.
     
