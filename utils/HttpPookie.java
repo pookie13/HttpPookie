@@ -1,4 +1,4 @@
-package com.myapplication.webtask;
+package prime.com.myapplication.webtask;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -18,9 +18,10 @@ public class HttpPookie {
 
     public static final String POST = "POST"; ///// Denotes request is type of POST
     public static final String GET = "GET";///// Denotes request is type of GET
+    public static final String CHAR_SET = "Accept-Charset";///// defination of char set
+    public static final String LOG_ = "pookieResponse";///// defination of char set
 
 
-    ArrayList<Request> requests = new ArrayList<>();
     ArrayList<Perams> peramsList = new ArrayList<>(); //contains all parameters for requesting an request to server
     private Request request;  //private member for having request.
 
@@ -32,7 +33,7 @@ public class HttpPookie {
 
         void onUnauthorizedConnection();
 
-        void onResponseData(JSONObject jsonObject);
+        void onResponseData(JSONObject jsonObject, Object tag);
 
         void onError();
 
@@ -89,6 +90,39 @@ public class HttpPookie {
     // TODO: 13/6/16 add an method which helps to set tag with request and sending response along with tag.
 
     /**
+     * this function sets tag id for request.
+     *
+     * @param tag : which helps to distinguish different different requests.
+     * @return
+     */
+    public HttpPookie setTag(Object tag) {
+        request.tag = tag;
+        return this;
+    }
+
+    /**
+     * sets read time out for request.
+     *
+     * @param readTimeOut value for time out provide only int byDefault its value is 10000 .
+     * @return
+     */
+    public HttpPookie setReadTimeOut(int readTimeOut) {
+        request.readTimeOut = readTimeOut;
+        return this;
+    }
+
+    /**
+     * sets read time out for request.
+     *
+     * @param connectionTimeOut value for time out provide only int byDefault its value is 15000 .
+     * @return
+     */
+    public HttpPookie setConnectionTimeOut(int connectionTimeOut) {
+        request.connectionTimeOut = connectionTimeOut;
+        return this;
+    }
+
+    /**
      * this function will build a HTTP request
      *
      * @return
@@ -106,6 +140,7 @@ public class HttpPookie {
 
     /**
      * this function execute request which sends in newCall()'s perams.
+     *
      * @param responseHandler
      */
     public void execute(NetworkResponsesHandler responseHandler) {
@@ -117,10 +152,30 @@ public class HttpPookie {
      * Class which contains meta values (coarse values) of request.
      */
     public class Request {
-        String url;
-        String type;
-        ArrayList<Perams> peramses;
+        String url;  //url for request
+        String type;// type of request
+        Object tag; // tag of request
+        ArrayList<Perams> peramses; //perams of request
+        int readTimeOut;   //read Time Out of request
+        int connectionTimeOut;   //connection Time Out of request
 
+        public Object getTag() {
+            if (tag == null)
+                return 0;
+            return tag;
+        }
+
+        public int getReadTimeOut() {
+            if (readTimeOut == 0)
+                return 10000;
+            return readTimeOut;
+        }
+
+        public int getConnectionTimeOut() {
+            if (connectionTimeOut == 0)
+                return 15000;
+            return connectionTimeOut;
+        }
     }
 
     /**
@@ -185,30 +240,23 @@ public class HttpPookie {
             try {
                 for (Perams args : request.peramses) {
                     params.put(args.getKey(), args.getValue().toString());
-
                 }
-
-                Log.d("request", "starting");
-
-                JSONObject json = jsonParser.makeHttpRequest(request.url, request.type, params);
-
+                JSONObject json = jsonParser.makeHttpRequest(request, params);
                 if (json != null) {
                     Log.d("JSON result", json.toString());
-
                     return json;
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return null;
         }
 
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
-            responseHandler.onResponseData(jsonObject);
+            responseHandler.onResponseData(jsonObject, request.getTag());
         }
 
     }
