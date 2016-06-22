@@ -82,7 +82,7 @@ setReadTimeOut(TIME_TO_SET);
 - Add XMl Requests.
 - store all response in cache memory to reflects changes.
 
-for more query please feel free to comments and male me [@piyush.gupta][dill]
+for more query please feel free to comments and mail me [@piyush.gupta][dill]
 
 [dill]: <mailto:piyush.gupta202390@gmail.com>
     
